@@ -17,11 +17,6 @@ async function verifyAuth(req, res) {
     }
 
 
-
-
-    return user
-
-
 }
 
 
