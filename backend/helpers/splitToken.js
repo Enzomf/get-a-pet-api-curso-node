@@ -1,10 +1,7 @@
+function splitToken(token) {
+  const splitedToken = token.split(" ")[1];
 
-function splitToken(token){
-
-    const splitedToken = token.split(" ")[1];
-
-
-    return splitedToken;
+  return splitedToken;
 }
 
-module.exports = splitToken
+module.exports = splitToken;
