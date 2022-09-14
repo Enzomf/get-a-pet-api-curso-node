@@ -3,6 +3,7 @@ const User = require("../models/User");
 const splitToken = require("./splitToken");
 
 async function verifyAuth(req, res, next) {
+  
   let token = req.headers.authorization;
 
   if (!token) {

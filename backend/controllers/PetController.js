@@ -1,8 +1,7 @@
 const Pet = require("../models/Pet");
 const userByToken = require("../helpers/userByToken");
 const validatePetOwner = require("../helpers/validadePetOwner");
-const deletePetImages = require("../helpers/deletePetImages")
-
+const deletePetImages = require("../helpers/deletePetImages");
 
 class PetController {
   async create(req, res) {
@@ -11,8 +10,6 @@ class PetController {
     const avalaible = true;
 
     const images = req.files;
-
-
 
     const petOwner = await userByToken(req);
 
@@ -60,8 +57,6 @@ class PetController {
       pet.images.push(image.filename);
     });
 
-
-
     try {
       const newPet = await pet.save();
       return res
@@ -88,6 +83,10 @@ class PetController {
     try {
       const pet = await Pet.findById(id);
 
+      if (!pet) {
+        return res.status(400).json({ message: "Pet não encontrado" });
+      }
+
       return res.status(200).json({ pet });
     } catch (err) {
       return res.status(400).json({ message: err });
@@ -103,13 +102,13 @@ class PetController {
       return res.status(404).json({ message: "Pet não encontrado" });
     }
 
-    if (!await validatePetOwner(req, pet.user._id)) {
+    if (!(await validatePetOwner(req, pet.user._id))) {
       return res
         .status(400)
         .json({ message: "Só é possivel remover os seus pets" });
     }
 
-    await deletePetImages(pet.images)
+    await deletePetImages(pet.images);
 
     try {
       await Pet.findByIdAndDelete(id);
@@ -118,6 +117,20 @@ class PetController {
     } catch (err) {
       return res.status(400).json({ message: err });
     }
+  }
+
+  async myPets(req, res) {
+    console.log("Está iniciando");
+    const user = await userByToken(req, res);
+
+    const pets = await Pet.find({ "user._id": user._id }).sort("-createdAt");
+
+
+    if(pets.length < 1){
+        return res.status(200).json({message:"Nenhum pet cadastrado!"})
+    }
+   
+    return res.status(200).json(pets)
   }
 }
 
